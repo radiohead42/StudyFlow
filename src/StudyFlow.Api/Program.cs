@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add builder configuration for PostgreSQl
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-var databaseUrl = builder.Configuration["DatabaseUrl"];
+var databaseUrl = builder.Configuration["DATABASE_URL"];
 
 if (!string.IsNullOrEmpty(databaseUrl))
 {
