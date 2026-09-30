@@ -114,6 +114,8 @@ public class TaskController(ITaskService taskService, ISubjectService subjectSer
             Title = request.Title,
             Description = request.Description,
             DueDate = request.DueDate,
+            Priority = request.Priority,
+            Status = request.Status,
             SubjectId = request.SubjectId
         };
 
