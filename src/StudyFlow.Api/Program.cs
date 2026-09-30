@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Add redirection from headers for Heroku deployment
 var isHeroku =
     !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("DYNO"));
 
@@ -23,6 +24,7 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
     }
 });
 
+// Add Verification for API Live
 builder.Services.AddHttpsRedirection(options =>
 {
     if (isHeroku)
@@ -79,9 +81,29 @@ builder.Services.AddScoped<ITaskService, TaskService>();
 builder.Services.AddScoped<ISubjectService, SubjectService>();
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+builder.Services.AddOpenApi( options => 
+        {
+        options.AddDocumentTransformer(
+                (document, context, cancellationToken) =>
+                {
+                    document.Info.Title = "StudyFlow API";
+                    document.Info.Version = "v1";
+                    document.Info.Description = """
+                        StudyFlow es una API REST para organizar
+                        materias y tareas de estudio.
+
+                        permite crear materias, registrar tareas,
+                        consultar fechas de entrega y administrar
+                        el proceso academico
+                        """;
+                    return Task.CompletedTask;
+                });
+        });
 
 var app = builder.Build();
+
+app.UseDefaultFiles();
+app.UseStaticFiles();
 
 //Documentation for scalar API
 var enableApiDocs = app.Environment.IsDevelopment() || app.Configuration.GetValue<bool>("ENABLE_API_DOCS");

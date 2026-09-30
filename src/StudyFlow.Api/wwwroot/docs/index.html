@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>StudyFlow API</title>
+
+    <link rel="stylesheet" href="/css/docs.css">
+</head>
+
+<body>
+
+<header class="hero">
+    <div class="container">
+        <span class="badge">StudyFlow API</span>
+
+        <h1>Organiza tu vida académica</h1>
+
+        <p>
+            StudyFlow es una API REST construida con ASP.NET Core
+            y PostgreSQL para administrar materias y tareas
+            universitarias.
+        </p>
+
+        <div class="actions">
+            <a href="/scalar/v1" class="button primary">
+                Probar API
+            </a>
+
+            <a href="/reference/" class="button">
+                Referencia técnica
+            </a>
+        </div>
+    </div>
+</header>
+
+<main class="container">
+
+    <section>
+        <h2>¿Qué es StudyFlow?</h2>
+
+        <p>
+            StudyFlow permite organizar materias universitarias
+            y las tareas asociadas a cada una.
+        </p>
+
+        <p>
+            Una materia puede contener múltiples tareas y cada
+            tarea puede tener información como título,
+            descripción y fecha límite.
+        </p>
+    </section>
+
+    <section>
+        <h2>Conceptos principales</h2>
+
+        <div class="cards">
+
+            <article class="card">
+                <h3>Materia</h3>
+
+                <p>
+                    Representa una asignatura académica.
+                </p>
+
+                <pre>{
+  "id": 1,
+  "name": "Programación Web",
+  "teacher": "Profesor Demo"
+}</pre>
+
+            </article>
+
+            <article class="card">
+                <h3>Tarea</h3>
+
+                <p>
+                    Representa una actividad asociada
+                    a una materia.
+                </p>
+
+                <pre>{
+  "id": 12,
+  "title": "Crear API",
+  "dueDate": "2026-10-20",
+  "subject": {
+    "id": 1,
+    "name": "Programación Web"
+  }
+}</pre>
+
+            </article>
+
+        </div>
+    </section>
+
+
+    <section>
+        <h2>Ejemplo de flujo</h2>
+
+        <div class="flow">
+
+            <div>
+                <strong>1</strong>
+                <p>Crear una materia</p>
+            </div>
+
+            <span>→</span>
+
+            <div>
+                <strong>2</strong>
+                <p>Crear una tarea</p>
+            </div>
+
+            <span>→</span>
+
+            <div>
+                <strong>3</strong>
+                <p>Consultar pendientes</p>
+            </div>
+
+        </div>
+    </section>
+
+
+    <section>
+        <h2>Interfaces disponibles</h2>
+
+        <div class="cards">
+
+            <article class="card">
+                <h3>Documentación</h3>
+
+                <p>
+                    Explicación general de StudyFlow,
+                    conceptos y ejemplos.
+                </p>
+
+                <a href="/docs/">/docs/</a>
+            </article>
+
+
+            <article class="card">
+                <h3>Referencia API</h3>
+
+                <p>
+                    Documentación técnica generada a partir
+                    del contrato OpenAPI.
+                </p>
+
+                <a href="/reference/">/reference/</a>
+            </article>
+
+
+            <article class="card">
+                <h3>API Playground</h3>
+
+                <p>
+                    Ejecuta requests directamente desde
+                    el navegador utilizando Scalar.
+                </p>
+
+                <a href="/scalar/v1">/scalar/v1</a>
+            </article>
+
+        </div>
+    </section>
+
+</main>
+
+<footer>
+    <div class="container">
+        StudyFlow · ASP.NET Core · PostgreSQL · Heroku
+    </div>
+</footer>
+
+</body>
+</html>
