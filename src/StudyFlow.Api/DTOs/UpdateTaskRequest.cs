@@ -17,7 +17,7 @@ public class UpdateTaskRequest
 
     public TaskPriority Priority { get; set; }
 
-    public TaskStatus Status { get; set; }
+    public StudyTaskStatus Status { get; set; }
 
     [Range(1, int.MaxValue)]
     public int SubjectId { get; set; }
