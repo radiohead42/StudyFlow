@@ -1,3 +1,4 @@
+using StudyFlow.Api.DTOs.Queries;
 using StudyFlow.Api.DTOs.Responses;
 using StudyFlow.Api.Models;
 
@@ -5,7 +6,7 @@ namespace StudyFlow.Api.Services;
 
 public interface ITaskService
 {
-    Task<IReadOnlyList<TaskResponse>> GetAllAsync();
+    Task<PagedResponse<TaskResponse>> GetAllAsync(TaskQueryParameters parameters);
 
     Task<TaskResponse?> GetByIdAsync(int id);
 

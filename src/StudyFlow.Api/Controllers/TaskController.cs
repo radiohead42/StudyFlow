@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using StudyFlow.Api.DTOs;
+using StudyFlow.Api.DTOs.Queries;
 using StudyFlow.Api.DTOs.Responses;
 using StudyFlow.Api.Models;
 using StudyFlow.Api.Models.Enums;
@@ -18,15 +19,25 @@ public class TaskController(ITaskService taskService, ISubjectService subjectSer
     private readonly ISubjectService subjectService = subjectService;
 
     /// <summary>
-    /// Gets all tasks.
+    /// Obtiene las tareas aplicando filtros, ordenamiento y paginación.
     /// </summary>
-    /// <returns>A list of tasks.</returns>
+    /// <remarks>
+    /// Permite filtrar las tareas por estado, prioridad,
+    /// materia, texto y rango de fechas.
+    /// </remarks>
+    /// <response code="200">
+    /// Las tareas se obtuvieron correctamente.
+    /// </response>
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<TaskResponse>>> GetAll()
+    [ProducesResponseType<PagedResponse<TaskResponse>>(StatusCodes.Status200OK)]
+    public async Task<ActionResult<PagedResponse<TaskResponse>>> GetAll(
+            [FromQuery] TaskQueryParameters parameters)
     {
-        return Ok(await taskService.GetAllAsync());
-    }
+        var result =
+            await taskService.GetAllAsync(parameters);
 
+        return Ok(result);
+    }
     /// <summary>
     /// Gets a task by its ID.
     /// </summary>
@@ -97,7 +108,7 @@ public class TaskController(ITaskService taskService, ISubjectService subjectSer
         if (subject is null) return BadRequest("La materia no existe");
 
         if (request.DueDate < DateTime.Now) return  BadRequest("La fecha de vencimiento no puede ser anterior a la fecha actual.");
-        
+
         var task = new TaskItem
         {
             Title = request.Title,

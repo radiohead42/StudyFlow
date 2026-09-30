@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using StudyFlow.Api.Data;
+using StudyFlow.Api.DTOs.Queries;
 using StudyFlow.Api.DTOs.Responses;
 using StudyFlow.Api.Mappers;
 using StudyFlow.Api.Models;
@@ -15,13 +16,129 @@ public class TaskService : ITaskService
         _dbContext = dbContext;
     }
 
-    public async Task<IReadOnlyList<TaskResponse>> GetAllAsync()
+    public async Task<PagedResponse<TaskResponse>> GetAllAsync(
+            TaskQueryParameters parameters)
     {
-        return await _dbContext.Tasks
-            .AsNoTracking()
-            .OrderBy(task => task.DueDate)
+        var query = _dbContext.Tasks
+            .AsNoTracking();
+
+        if (parameters.Status.HasValue)
+        {
+            query = query.Where(task =>
+                    task.Status == parameters.Status.Value);
+        }
+
+        if (parameters.Priority.HasValue)
+        {
+            query = query.Where(task =>
+                    task.Priority == parameters.Priority.Value);
+        }
+
+        if (parameters.SubjectId.HasValue)
+        {
+            query = query.Where(task =>
+                    task.SubjectId == parameters.SubjectId.Value);
+        }
+
+        if (!string.IsNullOrWhiteSpace(parameters.Search))
+        {
+            var search = parameters.Search.Trim();
+
+            query = query.Where(task =>
+                    EF.Functions.ILike(
+                        task.Title,
+                        $"%{search}%") ||
+                    EF.Functions.ILike(
+                        task.Description,
+                        $"%{search}%"));
+        }
+
+        if (parameters.DueFrom.HasValue)
+        {
+            query = query.Where(task =>
+                    task.DueDate >= parameters.DueFrom.Value);
+        }
+
+        if (parameters.DueTo.HasValue)
+        {
+            query = query.Where(task =>
+                    task.DueDate <= parameters.DueTo.Value);
+        }
+
+        var totalItems = await query.CountAsync();
+
+        query = (parameters.SortBy, parameters.Direction) switch
+        {
+            (TaskSortBy.Title, SortDirection.Asc) =>
+                query
+                .OrderBy(task => task.Title)
+                .ThenBy(task => task.Id),
+
+            (TaskSortBy.Title, SortDirection.Desc) =>
+                query
+                .OrderByDescending(task => task.Title)
+                .ThenBy(task => task.Id),
+
+            (TaskSortBy.CreatedAt, SortDirection.Asc) =>
+                query
+                .OrderBy(task => task.CreatedAt)
+                .ThenBy(task => task.Id),
+
+            (TaskSortBy.CreatedAt, SortDirection.Desc) =>
+                query
+                .OrderByDescending(task => task.CreatedAt)
+                .ThenBy(task => task.Id),
+
+            (TaskSortBy.Priority, SortDirection.Asc) =>
+                query
+                .OrderBy(task => task.Priority)
+                .ThenBy(task => task.Id),
+
+            (TaskSortBy.Priority, SortDirection.Desc) =>
+                query
+                .OrderByDescending(task => task.Priority)
+                .ThenBy(task => task.Id),
+
+            (TaskSortBy.Status, SortDirection.Asc) =>
+                query
+                .OrderBy(task => task.Status)
+                .ThenBy(task => task.Id),
+
+            (TaskSortBy.Status, SortDirection.Desc) =>
+                query
+                .OrderByDescending(task => task.Status)
+                .ThenBy(task => task.Id),
+
+            (TaskSortBy.DueDate, SortDirection.Desc) =>
+                query
+                .OrderByDescending(task => task.DueDate)
+                .ThenBy(task => task.Id),
+
+            _ =>
+                query
+                .OrderBy(task => task.DueDate)
+                .ThenBy(task => task.Id)
+        };
+
+        var items = await query
+            .Skip((parameters.Page - 1) * parameters.PageSize)
+            .Take(parameters.PageSize)
             .ProjectToResponse()
             .ToListAsync();
+
+        var totalPages = (int)Math.Ceiling(
+                totalItems / (double)parameters.PageSize);
+
+        return new PagedResponse<TaskResponse>
+        {
+            Items = items,
+            Page = parameters.Page,
+            PageSize = parameters.PageSize,
+            TotalItems = totalItems,
+            TotalPages = totalPages,
+            HasPreviousPage = parameters.Page > 1,
+            HasNextPage = parameters.Page < totalPages
+        };
     }
 
     public async Task<TaskResponse?> GetByIdAsync(int id)
