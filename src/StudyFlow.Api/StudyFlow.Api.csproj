@@ -15,18 +15,15 @@
 </PackageReference>
 <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3" />
 <PackageReference Include="Riok.Mapperly" Version="4.3.1" />
+<PackageReference Include="Scalar.AspNetCore" Version="2.17.11" />
 </ItemGroup>
 
 <Target Name="PostPublishStep" AfterTargets="Publish">
-<Message
-Text="Publishing executable database migration bundle"
-Importance="High" />
+<Message Text="Publishing executable database migration bundle" Importance="High" />
 
-<Exec
-Command="dotnet restore &quot;$(MSBuildProjectFullPath)&quot;" />
+<Exec Command="dotnet restore &quot;$(MSBuildProjectFullPath)&quot;" />
 
-<Exec
-Command="dotnet ef migrations bundle --project &quot;$(MSBuildProjectFullPath)&quot; --startup-project &quot;$(MSBuildProjectFullPath)&quot; --output &quot;$(PublishDir)efbundle&quot; --force" />
+<Exec Command="dotnet ef migrations bundle --project &quot;$(MSBuildProjectFullPath)&quot; --startup-project &quot;$(MSBuildProjectFullPath)&quot; --output &quot;$(PublishDir)efbundle&quot; --force" />
 </Target>
 
 </Project>

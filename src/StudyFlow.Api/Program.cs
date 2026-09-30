@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using StudyFlow.Api.Data;
 using StudyFlow.Api.Services;
 using Npgsql;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -54,10 +55,14 @@ builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
+//Documentation for scalar API
+var enableApiDocs = app.Environment.IsDevelopment() || app.Configuration.GetValue<bool>("ENABLE_API_DOCS");
+
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+if (enableApiDocs)
 {
     app.MapOpenApi();
+    app.MapScalarApiReference();
 }
 
 app.UseHttpsRedirection();
