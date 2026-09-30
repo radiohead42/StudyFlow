@@ -79,6 +79,7 @@ builder.Services.AddControllers();
 
 builder.Services.AddScoped<ITaskService, TaskService>();
 builder.Services.AddScoped<ISubjectService, SubjectService>();
+builder.Services.AddScoped<IDashboardService, DashboardService>();
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi( options => 
