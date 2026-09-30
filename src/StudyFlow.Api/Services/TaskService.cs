@@ -63,8 +63,10 @@ public class TaskService : ITaskService
         task.Title = updatedTask.Title;
         task.Description = updatedTask.Description;
         task.DueDate = updatedTask.DueDate;
-        task.IsCompleted = updatedTask.IsCompleted;
+        task.Priority = updatedTask.Priority;
+        task.Status = updatedTask.Status;
         task.SubjectId = updatedTask.SubjectId;
+        task.UpdatedAt = DateTime.UtcNow;
 
         await _dbContext.SaveChangesAsync();
 

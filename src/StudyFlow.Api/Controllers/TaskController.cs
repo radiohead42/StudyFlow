@@ -1,12 +1,15 @@
 using Microsoft.AspNetCore.Mvc;
 using StudyFlow.Api.DTOs;
 using StudyFlow.Api.DTOs.Responses;
-using StudyFlow.Api.Mappers;
 using StudyFlow.Api.Models;
+using StudyFlow.Api.Models.Enums;
 using StudyFlow.Api.Services;
 
 namespace StudyFlow.Api.Controllers;
 
+/// <summary>
+/// Controller for managing tasks.
+/// </summary>
 [ApiController]
 [Route("api/tasks")]
 public class TaskController(ITaskService taskService, ISubjectService subjectService) : ControllerBase 
@@ -14,12 +17,21 @@ public class TaskController(ITaskService taskService, ISubjectService subjectSer
     private readonly ITaskService taskService = taskService;
     private readonly ISubjectService subjectService = subjectService;
 
+    /// <summary>
+    /// Gets all tasks.
+    /// </summary>
+    /// <returns>A list of tasks.</returns>
     [HttpGet]
     public async Task<ActionResult<IEnumerable<TaskResponse>>> GetAll()
     {
         return Ok(await taskService.GetAllAsync());
     }
 
+    /// <summary>
+    /// Gets a task by its ID.
+    /// </summary>
+    /// <param name="id">The ID of the task.</param>
+    /// <returns>The task with the specified ID.</returns>
     [HttpGet("{id:int}")]
     public async Task<ActionResult<TaskResponse>> GetById(int id)
     {
@@ -30,10 +42,17 @@ public class TaskController(ITaskService taskService, ISubjectService subjectSer
         return Ok(task);
     }
 
+    /// <summary>
+    /// Creates a new task.
+    /// </summary>
+    /// <param name="request">The request containing the details of the new task.</param>
+    /// <returns>The created task.</returns>
     [HttpPost]
     public async Task<ActionResult<TaskItem>> Create(CreateTaskRequest request)
     {
         var subject = await subjectService.GetByIdAsync(request.SubjectId);
+
+        var now = DateTimeOffset.UtcNow;
 
         if (subject is null) return BadRequest("La materia no existe");
 
@@ -48,7 +67,10 @@ public class TaskController(ITaskService taskService, ISubjectService subjectSer
             Title = request.Title,
             Description = request.Description,
             DueDate = request.DueDate.ToUniversalTime(),
-            IsCompleted = false,
+            Priority = request.Priority,
+            Status = StudyTaskStatus.Pending,
+            CreatedAt = now,
+            UpdatedAt = now,
             SubjectId = request.SubjectId
         };
 
@@ -61,6 +83,12 @@ public class TaskController(ITaskService taskService, ISubjectService subjectSer
                 );
     }
 
+    /// <summary>
+    /// Updates an existing task.
+    /// </summary>
+    /// <param name="id">The ID of the task to update.</param>
+    /// <param name="request">The request containing the details of the update.</param>
+    /// <returns>No content if the update is successful, otherwise a not found result.</returns>
     [HttpPut("{id:int}")]
     public async Task<IActionResult> Update(int id, UpdateTaskRequest request)
     {
@@ -75,7 +103,6 @@ public class TaskController(ITaskService taskService, ISubjectService subjectSer
             Title = request.Title,
             Description = request.Description,
             DueDate = request.DueDate,
-            IsCompleted = request.IsCompleted,
             SubjectId = request.SubjectId
         };
 
@@ -86,6 +113,11 @@ public class TaskController(ITaskService taskService, ISubjectService subjectSer
         return NoContent();
     }
 
+    /// <summary>
+    /// Deletes a task.
+    /// </summary>
+    /// <param name="id">The ID of the task to delete.</param>
+    /// <returns>No content if the deletion is successful, otherwise a not found result.</returns>
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
     {

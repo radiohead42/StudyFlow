@@ -10,7 +10,13 @@ public class TaskResponse
 
     public DateTimeOffset DueDate { get; set; }
 
-    public bool IsCompleted { get; set; }
+    public TaskStatus Status { get; set; }
+
+    public DateTimeOffset CreatedAt { get; set; }
+
+    public DateTimeOffset UpdateAt { get; set; }
+
+    public DateTimeOffset? CompletedAt { get; set; }
 
     public SubjectSummaryResponse Subject { get; set; } = null!;
 }
