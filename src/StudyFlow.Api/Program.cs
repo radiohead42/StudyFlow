@@ -3,8 +3,36 @@ using StudyFlow.Api.Data;
 using StudyFlow.Api.Services;
 using Npgsql;
 using Scalar.AspNetCore;
+using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var isHeroku =
+    !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("DYNO"));
+
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders =
+        ForwardedHeaders.XForwardedFor |
+        ForwardedHeaders.XForwardedProto;
+
+    if (isHeroku)
+    {
+        options.KnownIPNetworks.Clear();
+        options.KnownProxies.Clear();
+    }
+});
+
+builder.Services.AddHttpsRedirection(options =>
+{
+    if (isHeroku)
+    {
+        options.RedirectStatusCode =
+            StatusCodes.Status308PermanentRedirect;
+
+        options.HttpsPort = 443;
+    }
+});
 
 // Add builder configuration for PostgreSQl
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -64,6 +92,8 @@ if (enableApiDocs)
     app.MapOpenApi();
     app.MapScalarApiReference();
 }
+
+app.UseForwardedHeaders();
 
 app.UseHttpsRedirection();
 
