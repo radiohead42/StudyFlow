@@ -24,7 +24,7 @@ public class Subject
     /// </summary>
     public ICollection<TaskItem> Tasks { get; set; } = [];
 
-    public string? UserId { get; set; }
+    public string UserId { get; set; }
 
-    public ApplicationUser? User { get; set; }
+    public ApplicationUser User { get; set; }
 }
