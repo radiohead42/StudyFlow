@@ -27,19 +27,21 @@ public class SubjectService(StudyFlowDbContext studyFlowDbContext) : ISubjectSer
         return true;
     }
 
-    public async Task<IReadOnlyList<SubjectResponse>> GetAllAsync()
+    public async Task<IReadOnlyList<SubjectResponse>> GetAllAsync(string userId)
     {
         return await studyFlowDbContext.Subjects
             .AsNoTracking()
+            .Where(subject => subject.UserId == userId)
             .OrderBy(subject => subject.Name)
             .ProjectToResponse()
             .ToListAsync();
     }
 
-    public async Task<SubjectResponse?> GetByIdAsync(int id)
+    public async Task<SubjectResponse?> GetByIdAsync(int id, string userId)
     {
         return await studyFlowDbContext.Subjects
             .AsNoTracking()
+            .Where(subject => subject.Id == id && subject.UserId == userId)
             .ProjectToResponse()
             .FirstOrDefaultAsync(subject => subject.Id == id);
     }

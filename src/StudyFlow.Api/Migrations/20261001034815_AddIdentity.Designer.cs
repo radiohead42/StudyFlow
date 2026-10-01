@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using StudyFlow.Api.Data;
@@ -11,9 +12,11 @@ using StudyFlow.Api.Data;
 namespace StudyFlow.Api.Migrations
 {
     [DbContext(typeof(StudyFlowDbContext))]
-    partial class StudyFlowDbContextModelSnapshot : ModelSnapshot
+    [Migration("20261001034815_AddIdentity")]
+    partial class AddIdentity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -234,13 +237,7 @@ namespace StudyFlow.Api.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Subjects");
                 });
@@ -340,17 +337,6 @@ namespace StudyFlow.Api.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("StudyFlow.Api.Models.Subject", b =>
-                {
-                    b.HasOne("StudyFlow.Api.Models.Identity.ApplicationUser", "User")
-                        .WithMany("Subjects")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("StudyFlow.Api.Models.TaskItem", b =>
                 {
                     b.HasOne("StudyFlow.Api.Models.Subject", "Subject")
@@ -360,11 +346,6 @@ namespace StudyFlow.Api.Migrations
                         .IsRequired();
 
                     b.Navigation("Subject");
-                });
-
-            modelBuilder.Entity("StudyFlow.Api.Models.Identity.ApplicationUser", b =>
-                {
-                    b.Navigation("Subjects");
                 });
 
             modelBuilder.Entity("StudyFlow.Api.Models.Subject", b =>

@@ -4,6 +4,10 @@ using StudyFlow.Api.Services;
 using Npgsql;
 using Scalar.AspNetCore;
 using Microsoft.AspNetCore.HttpOverrides;
+using StudyFlow.Api.Models.Identity;
+using StudyFlow.Api.OpenApi;
+using StudyFlow.Api.Services.CurrentUser;
+using Microsoft.AspNetCore.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -71,6 +75,12 @@ if (string.IsNullOrWhiteSpace(connectionString))
         "Database connection string is not configured.");
 }
 
+builder.Services.AddAuthorization();
+
+builder.Services
+    .AddIdentityApiEndpoints<ApplicationUser>()
+    .AddEntityFrameworkStores<StudyFlowDbContext>();
+
 builder.Services.AddDbContext<StudyFlowDbContext>(options => options.UseNpgsql(connectionString));
 
 // Add services to the container.
@@ -80,10 +90,13 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<ITaskService, TaskService>();
 builder.Services.AddScoped<ISubjectService, SubjectService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi( options => 
         {
+        options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
+        options.AddOperationTransformer<AuthOperationTransformer>();
         options.AddDocumentTransformer(
                 (document, context, cancellationToken) =>
                 {
@@ -110,10 +123,23 @@ builder.Services.AddProblemDetails(option =>
         };
 });
 
+builder.Services.AddRateLimiter( options => 
+        {
+            options.AddFixedWindowLimiter("auth", limiter => 
+                    {
+                        limiter.PermitLimit = 10;
+                        limiter.Window = TimeSpan.FromMinutes(1);
+                        limiter.QueueLimit = 0;
+                        limiter.AutoReplenishment = true;
+                     });
+            });
+
 var app = builder.Build();
 
 app.UseDefaultFiles();
 app.UseStaticFiles();
+
+app.UseRateLimiter();
 
 //Documentation for scalar API
 var enableApiDocs = app.Environment.IsDevelopment() || app.Configuration.GetValue<bool>("ENABLE_API_DOCS");
@@ -138,9 +164,13 @@ else
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
+
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapIdentityApi<ApplicationUser>();
 
 app.MapGet("/", () => Results.Ok(new
             {

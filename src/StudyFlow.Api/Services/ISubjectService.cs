@@ -5,9 +5,9 @@ namespace StudyFlow.Api.Services;
 
 public interface ISubjectService
 {
-    Task<IReadOnlyList<SubjectResponse>> GetAllAsync();
+    Task<IReadOnlyList<SubjectResponse>> GetAllAsync(string userId);
 
-    Task<SubjectResponse?> GetByIdAsync(int id);
+    Task<SubjectResponse?> GetByIdAsync(int id, string userId);
 
     Task<Subject> CreateAsync(Subject subject);
 

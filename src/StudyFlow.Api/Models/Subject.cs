@@ -1,3 +1,5 @@
+using StudyFlow.Api.Models.Identity;
+
 namespace StudyFlow.Api.Models;
 
 /// <summary>
@@ -21,4 +23,8 @@ public class Subject
     /// Gets or sets the collection of tasks associated with the subject.
     /// </summary>
     public ICollection<TaskItem> Tasks { get; set; } = [];
+
+    public string? UserId { get; set; }
+
+    public ApplicationUser? User { get; set; }
 }

@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using StudyFlow.Api.DTOs;
 using StudyFlow.Api.DTOs.Queries;
@@ -61,7 +62,12 @@ public class TaskController(ITaskService taskService, ISubjectService subjectSer
     [HttpPost]
     public async Task<ActionResult<TaskItem>> Create(CreateTaskRequest request)
     {
-        var subject = await subjectService.GetByIdAsync(request.SubjectId);
+
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (userId is null) return Unauthorized();
+
+        var subject = await subjectService.GetByIdAsync(request.SubjectId, userId);
 
         var now = DateTimeOffset.UtcNow;
 
@@ -103,7 +109,12 @@ public class TaskController(ITaskService taskService, ISubjectService subjectSer
     [HttpPut("{id:int}")]
     public async Task<IActionResult> Update(int id, UpdateTaskRequest request)
     {
-        var subject = await subjectService.GetByIdAsync(request.SubjectId);
+
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (userId is null) return Unauthorized();
+
+        var subject = await subjectService.GetByIdAsync(request.SubjectId, userId);
 
         if (subject is null) return BadRequest("La materia no existe");
 

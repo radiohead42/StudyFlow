@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using StudyFlow.Api.Data;
@@ -11,9 +12,11 @@ using StudyFlow.Api.Data;
 namespace StudyFlow.Api.Migrations
 {
     [DbContext(typeof(StudyFlowDbContext))]
-    partial class StudyFlowDbContextModelSnapshot : ModelSnapshot
+    [Migration("20261001182634_AddSubjectOwnership")]
+    partial class AddSubjectOwnership
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -235,7 +238,6 @@ namespace StudyFlow.Api.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -345,8 +347,7 @@ namespace StudyFlow.Api.Migrations
                     b.HasOne("StudyFlow.Api.Models.Identity.ApplicationUser", "User")
                         .WithMany("Subjects")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("User");
                 });

@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StudyFlow.Api.DTOs;
 using StudyFlow.Api.DTOs.Responses;
@@ -11,6 +13,7 @@ namespace StudyFlow.Api.Controllers;
 /// </summary>
 /// <param name="subjectService">The subject service.</param>
 /// <param name="taskService">The task service.</param>
+[Authorize]
 [ApiController]
 [Route("api/subjects")]
 
@@ -26,8 +29,13 @@ public class SubjectController(ISubjectService subjectService, ITaskService task
     [HttpGet]
     public async Task<ActionResult<IEnumerable<SubjectResponse>>> GetAll()
     {
+
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (userId is null) return Unauthorized();
+
         var subjects =
-            await subjectService.GetAllAsync();
+            await subjectService.GetAllAsync(userId);
 
         return Ok(subjects);
     }
@@ -49,8 +57,11 @@ public class SubjectController(ISubjectService subjectService, ITaskService task
     [HttpGet("{id:int}")]
     public async Task<ActionResult<SubjectResponse>> GetById(int id)
     {
-        var subject =
-            await subjectService.GetByIdAsync(id);
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (userId is null) return Unauthorized();
+
+        var subject = await subjectService.GetByIdAsync(id, userId);
 
         if (subject is null)
         {
@@ -68,7 +79,12 @@ public class SubjectController(ISubjectService subjectService, ITaskService task
     [HttpGet("{id:int}/tasks")]
     public async Task<ActionResult<IEnumerable<TaskResponse>>> GetTasks(int id)
     {
-        var subject = await subjectService.GetByIdAsync(id);
+
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (userId is null) return Unauthorized();
+
+        var subject = await subjectService.GetByIdAsync(id, userId);
 
         if (subject is null)
         {
@@ -103,10 +119,16 @@ public class SubjectController(ISubjectService subjectService, ITaskService task
     [HttpPost]
     public async Task<ActionResult<Subject>> Create(CreateSubjectRequest request)
     {
+
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (userId is null) return Unauthorized();
+
         var subject = new Subject
         {
             Name = request.Name,
-            Teacher = request.Teacher
+            Teacher = request.Teacher,
+            UserId = userId
         };
 
         var createdSubject = await subjectService.CreateAsync(subject);
@@ -151,7 +173,12 @@ public class SubjectController(ISubjectService subjectService, ITaskService task
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var subject = await subjectService.GetByIdAsync(id);
+
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (userId is null) return Unauthorized();
+
+        var subject = await subjectService.GetByIdAsync(id, userId);
 
         if (subject is null)
         {
