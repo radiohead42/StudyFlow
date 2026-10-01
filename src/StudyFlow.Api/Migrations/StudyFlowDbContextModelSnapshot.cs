@@ -241,7 +241,7 @@ namespace StudyFlow.Api.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Subjects");
+                    b.ToTable("Subjects", (string)null);
                 });
 
             modelBuilder.Entity("StudyFlow.Api.Models.TaskItem", b =>
@@ -285,7 +285,7 @@ namespace StudyFlow.Api.Migrations
 
                     b.HasIndex("SubjectId");
 
-                    b.ToTable("Tasks");
+                    b.ToTable("Tasks", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
