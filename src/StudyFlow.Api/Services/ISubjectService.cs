@@ -14,4 +14,6 @@ public interface ISubjectService
     Task<bool> UpdateAsync(int id, Subject subject);
 
     Task<bool> DeleteAsync(int id);
+
+    Task<bool> HasTasksAsync(int id);
 }

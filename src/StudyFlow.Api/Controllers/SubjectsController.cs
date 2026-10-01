@@ -33,19 +33,19 @@ public class SubjectController(ISubjectService subjectService, ITaskService task
     }
 
     /// <summary>
-        /// Gets a subject by ID.
-        /// </summary>
-        /// <param name="id">The ID of the subject.</param>
-        /// <returns>Details of the subject.</returns>
-        /// <example>
-        /// <response>
-        ///     {
-        ///         "Id": 1,
-        ///         "Name": "Mathematics",
-        ///         "Teacher": "Dr. Smith"
-        ///     }
-        /// </response>
-        /// </example>
+    /// Gets a subject by ID.
+    /// </summary>
+    /// <param name="id">The ID of the subject.</param>
+    /// <returns>Details of the subject.</returns>
+    /// <example>
+    /// <response>
+    ///     {
+    ///         "Id": 1,
+    ///         "Name": "Mathematics",
+    ///         "Teacher": "Dr. Smith"
+    ///     }
+    /// </response>
+    /// </example>
     [HttpGet("{id:int}")]
     public async Task<ActionResult<SubjectResponse>> GetById(int id)
     {
@@ -81,25 +81,25 @@ public class SubjectController(ISubjectService subjectService, ITaskService task
     }
 
     /// <summary>
-        /// Creates a new subject.
-        /// </summary>
-        /// <param name="request">The request object containing subject details.</param>
-        /// <returns>Created subject details.</returns>
-        /// <example>
-        /// <request>
-        ///     {
-        ///         "Name": "Mathematics",
-        ///         "Teacher": "Dr. Smith"
-        ///     }
-        /// </request>
-        /// <response>
-        ///     {
-        ///         "Id": 1,
-        ///         "Name": "Mathematics",
-        ///         "Teacher": "Dr. Smith"
-        ///     }
-        /// </response>
-        /// </example>
+    /// Creates a new subject.
+    /// </summary>
+    /// <param name="request">The request object containing subject details.</param>
+    /// <returns>Created subject details.</returns>
+    /// <example>
+    /// <request>
+    ///     {
+    ///         "Name": "Mathematics",
+    ///         "Teacher": "Dr. Smith"
+    ///     }
+    /// </request>
+    /// <response>
+    ///     {
+    ///         "Id": 1,
+    ///         "Name": "Mathematics",
+    ///         "Teacher": "Dr. Smith"
+    ///     }
+    /// </response>
+    /// </example>
     [HttpPost]
     public async Task<ActionResult<Subject>> Create(CreateSubjectRequest request)
     {
@@ -151,12 +151,32 @@ public class SubjectController(ISubjectService subjectService, ITaskService task
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var deleted = await subjectService.DeleteAsync(id);
+        var subject = await subjectService.GetByIdAsync(id);
 
-        if (!deleted)
+        if (subject is null)
         {
-            return NotFound();
+            return Problem(
+                    statusCode: StatusCodes.Status404NotFound,
+                    title: "Subject not found",
+                    detail: $"No subject with id {id} exists.",
+                    type: "https://studyflow/errors/subject-not-found");
         }
+
+        var hasTasks = await subjectService.HasTasksAsync(id);
+
+        if (hasTasks)
+        {
+            return Problem(
+                    statusCode: StatusCodes.Status409Conflict,
+                    title: "Subject cannot be deleted",
+                    detail:
+                    "The subject has associated tasks. " +
+                    "Delete or move them first.",
+                    type:
+                    "https://studyflow/errors/subject-has-tasks");
+        }
+
+        await subjectService.DeleteAsync(id);
 
         return NoContent();
     }

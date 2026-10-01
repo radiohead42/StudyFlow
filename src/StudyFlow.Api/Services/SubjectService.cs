@@ -57,4 +57,10 @@ public class SubjectService(StudyFlowDbContext studyFlowDbContext) : ISubjectSer
         await studyFlowDbContext.SaveChangesAsync();
         return true;
     }
+
+    public async Task<bool> HasTasksAsync(int id)
+    {
+        return await studyFlowDbContext.Tasks
+            .AnyAsync(task => task.SubjectId == id);
+    }
 }

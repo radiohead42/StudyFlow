@@ -101,6 +101,15 @@ builder.Services.AddOpenApi( options =>
                 });
         });
 
+builder.Services.AddProblemDetails(option =>
+        {
+        option.CustomizeProblemDetails = context => 
+        { 
+            context.ProblemDetails.Extensions["traceId"] = 
+                context.HttpContext.TraceIdentifier;
+        };
+});
+
 var app = builder.Build();
 
 app.UseDefaultFiles();
@@ -117,6 +126,15 @@ if (enableApiDocs)
 }
 
 app.UseForwardedHeaders();
+
+if(app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+}
+else
+{
+    app.UseExceptionHandler();
+}
 
 app.UseHttpsRedirection();
 
