@@ -11,6 +11,20 @@ using StudyFlow.Api.Services.CurrentUser;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.WebHost.UseSentry(options =>
+{
+    options.Dsn =
+        builder.Configuration["SENTRY_DSN"];
+
+    options.Environment =
+        builder.Environment.EnvironmentName;
+
+    options.Debug =
+        builder.Environment.IsDevelopment();
+
+    options.SendDefaultPii = false;
+});
+
 // ------------------------------------------------------------
 // Heroku / reverse proxy
 // ------------------------------------------------------------
