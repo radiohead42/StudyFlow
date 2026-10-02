@@ -4,16 +4,19 @@ using StudyFlow.Api.DTOs.Queries;
 using StudyFlow.Api.DTOs.Responses;
 using StudyFlow.Api.Mappers;
 using StudyFlow.Api.Models;
+using StudyFlow.Api.Services.CurrentUser;
 
 namespace StudyFlow.Api.Services;
 
 public class TaskService : ITaskService
 {
     private readonly StudyFlowDbContext _dbContext;
+    private readonly ICurrentUserService currentUserService;
 
-    public TaskService(StudyFlowDbContext dbContext)
+    public TaskService(StudyFlowDbContext dbContext, ICurrentUserService currentUserService)
     {
         _dbContext = dbContext;
+        this.currentUserService = currentUserService;
     }
 
     public async Task<PagedResponse<TaskResponse>> GetAllAsync(

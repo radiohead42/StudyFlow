@@ -14,7 +14,7 @@ public class TaskResponse
 
     public DateTimeOffset CreatedAt { get; set; }
 
-    public DateTimeOffset UpdateAt { get; set; }
+    public DateTimeOffset UpdatedAt { get; set; }
 
     public DateTimeOffset? CompletedAt { get; set; }
 

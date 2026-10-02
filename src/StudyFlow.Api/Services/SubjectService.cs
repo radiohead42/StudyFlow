@@ -15,10 +15,10 @@ public class SubjectService(StudyFlowDbContext studyFlowDbContext) : ISubjectSer
         return subject;
     }
 
-    public async Task<bool> DeleteAsync(int id)
+    public async Task<bool> DeleteAsync(int id, string userId)
     {
         var subject = await studyFlowDbContext.Subjects
-            .FirstOrDefaultAsync(subject => subject.Id == id);
+            .FirstOrDefaultAsync(subject => subject.Id == id && subject.UserId == userId);
         
         if (subject is null) return false;
 
@@ -46,10 +46,10 @@ public class SubjectService(StudyFlowDbContext studyFlowDbContext) : ISubjectSer
             .FirstOrDefaultAsync(subject => subject.Id == id);
     }
 
-    public async Task<bool> UpdateAsync(int id, Subject updateSubject)
+    public async Task<bool> UpdateAsync(int id, Subject updateSubject, string userId)
     {
         var subject = await studyFlowDbContext.Subjects
-            .FirstOrDefaultAsync(subject => subject.Id == id);
+            .FirstOrDefaultAsync(subject => subject.Id == id && subject.UserId == userId);
 
         if (subject is null) return false;
 

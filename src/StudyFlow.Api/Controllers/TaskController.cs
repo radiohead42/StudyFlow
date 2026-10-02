@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StudyFlow.Api.DTOs;
 using StudyFlow.Api.DTOs.Queries;
@@ -6,18 +7,18 @@ using StudyFlow.Api.DTOs.Responses;
 using StudyFlow.Api.Models;
 using StudyFlow.Api.Models.Enums;
 using StudyFlow.Api.Services;
+using StudyFlow.Api.Services.CurrentUser;
 
 namespace StudyFlow.Api.Controllers;
 
 /// <summary>
 /// Controller for managing tasks.
 /// </summary>
+[Authorize]
 [ApiController]
 [Route("api/tasks")]
 public class TaskController(ITaskService taskService, ISubjectService subjectService) : ControllerBase 
 {
-    private readonly ITaskService taskService = taskService;
-    private readonly ISubjectService subjectService = subjectService;
 
     /// <summary>
     /// Obtiene las tareas aplicando filtros, ordenamiento y paginación.

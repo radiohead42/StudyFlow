@@ -149,13 +149,17 @@ public class SubjectController(ISubjectService subjectService, ITaskService task
     [HttpPut("{id:int}")]
     public async Task<IActionResult> Update(int id, UpdateSubjectRequest request)
     {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (userId is null) return Unauthorized();
+
         var subject = new Subject
         {
             Name = request.Name,
             Teacher = request.Teacher
         };
 
-        var updated = await subjectService.UpdateAsync(id, subject);
+        var updated = await subjectService.UpdateAsync(id, subject, userId);
 
         if (!updated)
         {
@@ -203,7 +207,7 @@ public class SubjectController(ISubjectService subjectService, ITaskService task
                     "https://studyflow/errors/subject-has-tasks");
         }
 
-        await subjectService.DeleteAsync(id);
+        await subjectService.DeleteAsync(id, userId);
 
         return NoContent();
     }

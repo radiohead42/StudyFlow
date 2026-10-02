@@ -1,2 +1,16 @@
+# .NET build outputs
 bin/
 obj/
+
+# Test results
+TestResults/
+
+# Coverage
+coverage/
+coverage.*
+*.coverage
+*.coveragexml
+
+# IDE
+.vscode/
+.idea/
