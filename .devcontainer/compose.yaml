@@ -1,0 +1,50 @@
+services:
+  app:
+    image: mcr.microsoft.com/devcontainers/dotnet:10.0-noble
+
+    volumes:
+      - ..:/workspaces/StudyFlow:cached
+
+    command: sleep infinity
+
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://0.0.0.0:5050
+      ENABLE_API_DOCS: "true"
+
+      ConnectionStrings__DefaultConnection: >-
+        Host=db;
+        Port=5432;
+        Database=studyflow;
+        Username=studyflow;
+        Password=studyflow
+
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:17-alpine
+
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_DB: studyflow
+      POSTGRES_USER: studyflow
+      POSTGRES_PASSWORD: studyflow
+
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U studyflow -d studyflow"
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres-data:

@@ -1,11 +1,13 @@
 {
-  "name": "StudyFlow .NET 10",
+  "name": "StudyFlow",
 
-  "image": "mcr.microsoft.com/devcontainers/dotnet:10.0-noble",
+  "dockerComposeFile": "compose.yaml",
 
-  "features": {
-    "ghcr.io/devcontainers/features/docker-in-docker:4": {}
-  },
+  "service": "app",
+
+  "workspaceFolder": "/workspaces/StudyFlow",
+
+  "shutdownAction": "stopCompose",
 
   "forwardPorts": [
     5050
@@ -18,6 +20,8 @@
   },
 
   "postCreateCommand": "dotnet restore StudyFlow.slnx && dotnet tool restore",
+
+  "postStartCommand": "dotnet ef database update --project src/StudyFlow.Api --startup-project src/StudyFlow.Api",
 
   "customizations": {
     "vscode": {
