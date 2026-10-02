@@ -72,7 +72,7 @@ public class TaskController(ITaskService taskService, ISubjectService subjectSer
 
         var now = DateTimeOffset.UtcNow;
 
-        if (subject is null) return BadRequest("La materia no existe");
+        if (subject is null) return NotFound("La materia no existe");
 
         if (request.DueDate < DateTime.Now)
         {
