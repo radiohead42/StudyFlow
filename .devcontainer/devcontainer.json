@@ -1,0 +1,29 @@
+{
+  "name": "StudyFlow .NET 10",
+
+  "image": "mcr.microsoft.com/devcontainers/dotnet:10.0-noble",
+
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:4": {}
+  },
+
+  "forwardPorts": [
+    5050
+  ],
+
+  "portsAttributes": {
+    "5050": {
+      "label": "StudyFlow API"
+    }
+  },
+
+  "postCreateCommand": "dotnet restore StudyFlow.slnx && dotnet tool restore",
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-dotnettools.csdevkit"
+      ]
+    }
+  }
+}
