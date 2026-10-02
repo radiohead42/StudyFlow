@@ -11,19 +11,24 @@ using StudyFlow.Api.Services.CurrentUser;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.WebHost.UseSentry(options =>
+var sentryDsn =
+    builder.Configuration["SENTRY_DSN"];
+
+if (!string.IsNullOrWhiteSpace(sentryDsn))
 {
-    options.Dsn =
-        builder.Configuration["SENTRY_DSN"];
+    builder.WebHost.UseSentry(options =>
+    {
+        options.Dsn = sentryDsn;
 
-    options.Environment =
-        builder.Environment.EnvironmentName;
+        options.Environment =
+            builder.Environment.EnvironmentName;
 
-    options.Debug =
-        builder.Environment.IsDevelopment();
+        options.Debug =
+            builder.Environment.IsDevelopment();
 
-    options.SendDefaultPii = false;
-});
+        options.SendDefaultPii = false;
+    });
+}
 
 // ------------------------------------------------------------
 // Heroku / reverse proxy
