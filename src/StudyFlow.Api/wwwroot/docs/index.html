@@ -7,6 +7,10 @@
         name="viewport"
         content="width=device-width, initial-scale=1.0">
 
+    <meta
+        name="description"
+        content="StudyFlow API - API REST para organizar materias y tareas universitarias.">
+
     <title>StudyFlow API</title>
 
     <link rel="stylesheet" href="/css/docs.css">
@@ -16,17 +20,19 @@
 
 <header class="hero">
     <div class="container">
+
         <span class="badge">StudyFlow API</span>
 
         <h1>Organiza tu vida académica</h1>
 
         <p>
             StudyFlow es una API REST construida con ASP.NET Core
-            y PostgreSQL para administrar materias y tareas
-            universitarias.
+            y PostgreSQL para administrar materias, tareas y el
+            progreso académico de cada usuario.
         </p>
 
         <div class="actions">
+
             <a href="/scalar/v1" class="button primary">
                 Probar API
             </a>
@@ -34,13 +40,21 @@
             <a href="/reference/" class="button">
                 Referencia técnica
             </a>
+
         </div>
+
     </div>
 </header>
 
+
 <main class="container">
 
+    <!-- ================================================== -->
+    <!-- Introducción -->
+    <!-- ================================================== -->
+
     <section>
+
         <h2>¿Qué es StudyFlow?</h2>
 
         <p>
@@ -49,22 +63,112 @@
         </p>
 
         <p>
-            Una materia puede contener múltiples tareas y cada
-            tarea puede tener información como título,
-            descripción y fecha límite.
+            Cada usuario dispone de su propio espacio de trabajo.
+            Las materias y tareas están asociadas al usuario
+            autenticado, evitando que otros usuarios puedan
+            consultar, modificar o eliminar información ajena.
         </p>
+
     </section>
 
+
+    <!-- ================================================== -->
+    <!-- Características -->
+    <!-- ================================================== -->
+
     <section>
+
+        <h2>Características principales</h2>
+
+        <div class="cards">
+
+            <article class="card">
+
+                <h3>Autenticación</h3>
+
+                <p>
+                    Registro e inicio de sesión mediante
+                    ASP.NET Core Identity y autenticación
+                    con tokens Bearer.
+                </p>
+
+                <pre>POST /api/auth/register
+POST /api/auth/login</pre>
+
+            </article>
+
+
+            <article class="card">
+
+                <h3>Materias</h3>
+
+                <p>
+                    Permite crear y administrar las materias
+                    pertenecientes al usuario autenticado.
+                </p>
+
+                <pre>GET    /api/subjects
+POST   /api/subjects
+GET    /api/subjects/{id}
+PUT    /api/subjects/{id}
+DELETE /api/subjects/{id}</pre>
+
+            </article>
+
+
+            <article class="card">
+
+                <h3>Tareas</h3>
+
+                <p>
+                    Las tareas pertenecen a una materia y pueden
+                    incluir prioridad, estado y fecha límite.
+                </p>
+
+                <pre>GET    /api/tasks
+POST   /api/tasks
+GET    /api/tasks/{id}
+PUT    /api/tasks/{id}
+DELETE /api/tasks/{id}</pre>
+
+            </article>
+
+
+            <article class="card">
+
+                <h3>Dashboard</h3>
+
+                <p>
+                    Proporciona una vista resumida del estado
+                    académico del usuario.
+                </p>
+
+                <pre>GET /api/dashboard</pre>
+
+            </article>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================================================== -->
+    <!-- Conceptos -->
+    <!-- ================================================== -->
+
+    <section>
+
         <h2>Conceptos principales</h2>
 
         <div class="cards">
 
             <article class="card">
+
                 <h3>Materia</h3>
 
                 <p>
-                    Representa una asignatura académica.
+                    Representa una asignatura académica
+                    perteneciente a un usuario.
                 </p>
 
                 <pre>{
@@ -75,7 +179,9 @@
 
             </article>
 
+
             <article class="card">
+
                 <h3>Tarea</h3>
 
                 <p>
@@ -86,7 +192,10 @@
                 <pre>{
   "id": 12,
   "title": "Crear API",
-  "dueDate": "2026-10-20",
+  "description": "Construir el backend",
+  "dueDate": "2026-10-20T18:00:00Z",
+  "priority": "High",
+  "status": "Pending",
   "subject": {
     "id": 1,
     "name": "Programación Web"
@@ -96,55 +205,493 @@
             </article>
 
         </div>
+
     </section>
 
 
+    <!-- ================================================== -->
+    <!-- Flujo de usuario -->
+    <!-- ================================================== -->
+
     <section>
-        <h2>Ejemplo de flujo</h2>
+
+        <h2>Flujo de uso</h2>
 
         <div class="flow">
 
             <div>
                 <strong>1</strong>
-                <p>Crear una materia</p>
+                <p>Crear una cuenta</p>
             </div>
 
             <span>→</span>
 
             <div>
                 <strong>2</strong>
-                <p>Crear una tarea</p>
+                <p>Iniciar sesión</p>
             </div>
 
             <span>→</span>
 
             <div>
                 <strong>3</strong>
-                <p>Consultar pendientes</p>
+                <p>Obtener token</p>
+            </div>
+
+            <span>→</span>
+
+            <div>
+                <strong>4</strong>
+                <p>Crear materias</p>
+            </div>
+
+            <span>→</span>
+
+            <div>
+                <strong>5</strong>
+                <p>Crear tareas</p>
+            </div>
+
+            <span>→</span>
+
+            <div>
+                <strong>6</strong>
+                <p>Consultar dashboard</p>
             </div>
 
         </div>
+
     </section>
 
 
+    <!-- ================================================== -->
+    <!-- Autenticación -->
+    <!-- ================================================== -->
+
     <section>
+
+        <h2>Autenticación y seguridad</h2>
+
+        <div class="cards">
+
+            <article class="card">
+
+                <h3>Bearer Token</h3>
+
+                <p>
+                    Los endpoints protegidos requieren un
+                    access token obtenido durante el login.
+                </p>
+
+                <pre>Authorization: Bearer &lt;access_token&gt;</pre>
+
+            </article>
+
+
+            <article class="card">
+
+                <h3>Aislamiento por usuario</h3>
+
+                <p>
+                    Cada usuario solamente puede acceder a sus
+                    propias materias y tareas.
+                </p>
+
+                <pre>Usuario A
+└── Materias A
+    └── Tareas A
+
+Usuario B
+└── Materias B
+    └── Tareas B</pre>
+
+            </article>
+
+
+            <article class="card">
+
+                <h3>Rate Limiting</h3>
+
+                <p>
+                    Los endpoints de autenticación utilizan
+                    limitación de peticiones para reducir
+                    intentos abusivos.
+                </p>
+
+                <pre>/api/auth/*
+→ límite de solicitudes</pre>
+
+            </article>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================================================== -->
+    <!-- Consultas -->
+    <!-- ================================================== -->
+
+    <section>
+
+        <h2>Consultas de tareas</h2>
+
+        <p>
+            El listado de tareas permite realizar búsquedas,
+            filtros, ordenamiento y paginación.
+        </p>
+
+        <div class="cards">
+
+            <article class="card">
+
+                <h3>Filtros</h3>
+
+                <pre>?status=Pending
+&priority=High
+&subjectId=1
+&search=api</pre>
+
+            </article>
+
+
+            <article class="card">
+
+                <h3>Fechas</h3>
+
+                <pre>?dueFrom=2026-10-01
+&dueTo=2026-10-31</pre>
+
+            </article>
+
+
+            <article class="card">
+
+                <h3>Paginación</h3>
+
+                <pre>?page=1
+&pageSize=20</pre>
+
+            </article>
+
+
+            <article class="card">
+
+                <h3>Ordenamiento</h3>
+
+                <pre>?sortBy=dueDate
+&direction=Asc</pre>
+
+            </article>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================================================== -->
+    <!-- Arquitectura -->
+    <!-- ================================================== -->
+
+    <section>
+
+        <h2>Arquitectura</h2>
+
+        <p>
+            StudyFlow utiliza una arquitectura por capas para
+            separar las responsabilidades de la aplicación.
+        </p>
+
+        <div class="flow">
+
+            <div>
+                <strong>HTTP</strong>
+                <p>Request</p>
+            </div>
+
+            <span>→</span>
+
+            <div>
+                <strong>Controller</strong>
+                <p>API</p>
+            </div>
+
+            <span>→</span>
+
+            <div>
+                <strong>Service</strong>
+                <p>Lógica</p>
+            </div>
+
+            <span>→</span>
+
+            <div>
+                <strong>EF Core</strong>
+                <p>Datos</p>
+            </div>
+
+            <span>→</span>
+
+            <div>
+                <strong>PostgreSQL</strong>
+                <p>Persistencia</p>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================================================== -->
+    <!-- Entornos -->
+    <!-- ================================================== -->
+
+    <section>
+
+        <h2>Entornos de ejecución</h2>
+
+        <div class="cards">
+
+            <article class="card">
+
+                <h3>Desarrollo local</h3>
+
+                <p>
+                    Desarrollo con .NET 10 y PostgreSQL
+                    ejecutándose localmente.
+                </p>
+
+            </article>
+
+
+            <article class="card">
+
+                <h3>GitHub Codespaces</h3>
+
+                <p>
+                    Entorno de desarrollo reproducible utilizando
+                    Dev Containers y Docker Compose.
+                </p>
+
+                <pre>app
+├── .NET 10
+└── StudyFlow
+
+db
+└── PostgreSQL 17</pre>
+
+            </article>
+
+
+            <article class="card">
+
+                <h3>Testing</h3>
+
+                <p>
+                    Los tests de integración utilizan xUnit,
+                    WebApplicationFactory y Testcontainers.
+                </p>
+
+                <pre>xUnit
+   ↓
+StudyFlow
+   ↓
+PostgreSQL temporal</pre>
+
+            </article>
+
+
+            <article class="card">
+
+                <h3>Producción</h3>
+
+                <p>
+                    StudyFlow está desplegado en Heroku con
+                    PostgreSQL y migraciones automáticas
+                    durante la fase de release.
+                </p>
+
+                <pre>Heroku
+├── StudyFlow API
+├── PostgreSQL
+└── EF migrations</pre>
+
+            </article>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================================================== -->
+    <!-- Observabilidad -->
+    <!-- ================================================== -->
+
+    <section>
+
+        <h2>Monitoreo y observabilidad</h2>
+
+        <div class="cards">
+
+            <article class="card">
+
+                <h3>Sentry</h3>
+
+                <p>
+                    StudyFlow utiliza Sentry para detectar
+                    errores inesperados y analizar excepciones
+                    ocurridas en la aplicación.
+                </p>
+
+                <pre>StudyFlow
+   ↓
+Exception
+   ↓
+Sentry
+   ↓
+Issue + Stack Trace</pre>
+
+            </article>
+
+
+            <article class="card">
+
+                <h3>Entornos</h3>
+
+                <p>
+                    Los eventos permiten distinguir errores
+                    ocurridos durante desarrollo y producción.
+                </p>
+
+                <pre>Development
+Production</pre>
+
+            </article>
+
+
+            <article class="card">
+
+                <h3>Privacidad</h3>
+
+                <p>
+                    La integración está configurada para evitar
+                    el envío automático de información personal
+                    innecesaria.
+                </p>
+
+                <pre>SendDefaultPii = false</pre>
+
+            </article>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================================================== -->
+    <!-- Tecnologías -->
+    <!-- ================================================== -->
+
+    <section>
+
+        <h2>Tecnologías</h2>
+
+        <div class="cards">
+
+            <article class="card">
+                <h3>.NET 10</h3>
+                <p>
+                    Plataforma principal utilizada por StudyFlow.
+                </p>
+            </article>
+
+            <article class="card">
+                <h3>ASP.NET Core</h3>
+                <p>
+                    Controllers, autenticación, autorización
+                    y endpoints HTTP.
+                </p>
+            </article>
+
+            <article class="card">
+                <h3>Entity Framework Core</h3>
+                <p>
+                    Acceso a datos y administración
+                    de migrations.
+                </p>
+            </article>
+
+            <article class="card">
+                <h3>PostgreSQL</h3>
+                <p>
+                    Base de datos relacional utilizada
+                    para persistencia.
+                </p>
+            </article>
+
+            <article class="card">
+                <h3>ASP.NET Core Identity</h3>
+                <p>
+                    Administración de usuarios y autenticación.
+                </p>
+            </article>
+
+            <article class="card">
+                <h3>Mapperly</h3>
+                <p>
+                    Generación de mappings entre modelos
+                    y DTOs.
+                </p>
+            </article>
+
+            <article class="card">
+                <h3>Scalar + OpenAPI</h3>
+                <p>
+                    Documentación técnica y playground
+                    interactivo.
+                </p>
+            </article>
+
+            <article class="card">
+                <h3>Sentry</h3>
+                <p>
+                    Monitoreo de errores y observabilidad.
+                </p>
+            </article>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================================================== -->
+    <!-- Interfaces -->
+    <!-- ================================================== -->
+
+    <section>
+
         <h2>Interfaces disponibles</h2>
 
         <div class="cards">
 
             <article class="card">
+
                 <h3>Documentación</h3>
 
                 <p>
-                    Explicación general de StudyFlow,
-                    conceptos y ejemplos.
+                    Introducción general a StudyFlow,
+                    arquitectura y conceptos principales.
                 </p>
 
-                <a href="/docs/">/docs/</a>
+                <a href="/docs/">
+                    /docs/
+                </a>
+
             </article>
 
 
             <article class="card">
+
                 <h3>Referencia API</h3>
 
                 <p>
@@ -152,30 +699,42 @@
                     del contrato OpenAPI.
                 </p>
 
-                <a href="/reference/">/reference/</a>
+                <a href="/reference/">
+                    /reference/
+                </a>
+
             </article>
 
 
             <article class="card">
+
                 <h3>API Playground</h3>
 
                 <p>
-                    Ejecuta requests directamente desde
-                    el navegador utilizando Scalar.
+                    Permite ejecutar requests directamente
+                    desde el navegador utilizando Scalar.
                 </p>
 
-                <a href="/scalar/v1">/scalar/v1</a>
+                <a href="/scalar/v1">
+                    /scalar/v1
+                </a>
+
             </article>
 
         </div>
+
     </section>
 
 </main>
 
+
 <footer>
+
     <div class="container">
-        StudyFlow · ASP.NET Core · PostgreSQL · Heroku
+        StudyFlow · .NET 10 · ASP.NET Core · PostgreSQL ·
+        Identity · Sentry · Heroku
     </div>
+
 </footer>
 
 </body>
