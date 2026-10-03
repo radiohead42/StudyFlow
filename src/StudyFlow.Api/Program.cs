@@ -29,7 +29,6 @@ if (!string.IsNullOrWhiteSpace(sentryDsn))
         options.SendDefaultPii = false;
     });
 }
-
 // ------------------------------------------------------------
 // Heroku / reverse proxy
 // ------------------------------------------------------------
