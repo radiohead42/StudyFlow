@@ -50,6 +50,19 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
     }
 });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("Frontend", policy =>
+    {
+        policy
+            .WithOrigins(
+                "https://ashy-pond-02f21d710.6.azurestaticapps.net"
+            )
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
 builder.Services.AddHttpsRedirection(options =>
 {
     if (isHeroku)
@@ -179,6 +192,8 @@ builder.Services.AddRateLimiter(options =>
 // ------------------------------------------------------------
 
 var app = builder.Build();
+
+app.UseCors("Frontend");
 
 // ------------------------------------------------------------
 // Middleware pipeline
