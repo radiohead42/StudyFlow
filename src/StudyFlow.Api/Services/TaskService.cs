@@ -148,6 +148,7 @@ public class TaskService : ITaskService
     {
         return await _dbContext.Tasks
             .AsNoTracking()
+            .Where(task => task.Id == id)
             .ProjectToResponse()
             .FirstOrDefaultAsync();
     }
