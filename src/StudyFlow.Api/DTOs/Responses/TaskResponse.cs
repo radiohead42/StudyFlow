@@ -1,3 +1,5 @@
+using StudyFlow.Api.Models.Enums;
+
 namespace StudyFlow.Api.DTOs.Responses;
 
 public class TaskResponse
@@ -11,6 +13,8 @@ public class TaskResponse
     public DateTimeOffset DueDate { get; set; }
 
     public TaskStatus Status { get; set; }
+
+    public TaskPriority Priority { get; set; }
 
     public DateTimeOffset CreatedAt { get; set; }
 
