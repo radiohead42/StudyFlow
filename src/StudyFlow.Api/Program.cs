@@ -111,6 +111,7 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<ITaskService, TaskService>();
 builder.Services.AddScoped<ISubjectService, SubjectService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
+builder.Services.AddScoped<IAiService, AiService>();
 
 builder.Services.AddScoped<
     ICurrentUserService,
